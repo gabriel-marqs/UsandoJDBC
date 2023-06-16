@@ -18,6 +18,7 @@ public class Program {
 
 		Connection conn = null;
 		PreparedStatement st = null;
+		ResultSet rs = null;
 
 		try {
 
@@ -35,6 +36,12 @@ public class Program {
 			if (option == 'd') {
 				System.out.println("In progress...");
 			} else if (option == 'e') {
+				
+				System.out.print("How many employees do you wanna input? ");
+				int count = sc.nextInt();
+				
+				for (int i = 0; i < count; i++) {
+				
 				System.out.print("Name: ");
 				sc.nextLine();
 				String name = sc.nextLine();
@@ -49,12 +56,17 @@ public class Program {
 
 				Seller seller = new Seller(name, email, birthDate, baseSalary, departmentId);
 
-				ResultSet rs = seller.inputSeller();
-
+				rs = seller.inputSeller();
+				
+				System.out.println();
 				while (rs.next()) {
 					int id = rs.getInt(1);
-					System.out.println("Done! ID = " + id);
+					System.out.println(seller.getName() + " Successfully added, your ID is " + id);
 				}
+				
+				}
+
+				
 			}
 
 		} catch (SQLException e) {
