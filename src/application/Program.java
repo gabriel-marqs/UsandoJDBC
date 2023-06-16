@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import db.DB;
+import entities.Department;
 import entities.Seller;
 
 public class Program {
@@ -36,6 +37,11 @@ public class Program {
 			if (option == 'd') {
 				System.out.println("In progress...");
 			} else if (option == 'e') {
+				
+				Department department = new Department();
+				int departmentCounter = department.departmentCounter();
+				
+				if (departmentCounter > 0) {
 				
 				System.out.print("How many employees do you wanna input? ");
 				int count = sc.nextInt();
@@ -66,7 +72,9 @@ public class Program {
 				
 				}
 
-				
+				} else {
+					System.out.println("You need at least one department to input a employee.");
+				}
 			}
 
 		} catch (SQLException e) {
