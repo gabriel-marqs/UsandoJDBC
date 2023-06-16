@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import db.DB;
 import entities.Department;
-import entities.Seller;
+import entities.Employee;
 
 public class Program {
 
@@ -25,7 +25,7 @@ public class Program {
 
 			conn = DB.getConnection();
 
-			System.out.print("Press D to input a new Department, and E to input a new Employee: ");
+			System.out.print("Do you want add a new Employee or Department? (E/D): ");
 			char option = sc.next().toLowerCase().charAt(0);
 
 			while (option != 'd' && option != 'e') {
@@ -35,7 +35,20 @@ public class Program {
 
 			}
 			if (option == 'd') {
-				System.out.println("In progress...");
+				System.out.print("How many departments do you wanna add? ");
+				int count = sc.nextInt();
+				sc.nextLine();
+				
+				for (int i = 0; i < count; i++) {
+					
+					System.out.print("Department name: ");
+					String name = sc.nextLine();
+					
+					Department department = new Department(name);
+					rs = department.addDepartment();
+					department.printAddDepartment(rs);
+					
+				}
 			} else if (option == 'e') {
 				
 				Department department = new Department();
@@ -43,13 +56,12 @@ public class Program {
 				
 				if (departmentCounter > 0) {
 				
-				System.out.print("How many employees do you wanna input? ");
+				System.out.print("How many employees do you wanna add? ");
 				int count = sc.nextInt();
 				
 				for (int i = 0; i < count; i++) {
 				
 				System.out.print("Name: ");
-				sc.nextLine();
 				String name = sc.nextLine();
 				System.out.print("E-mail: ");
 				String email = sc.next();
@@ -60,15 +72,11 @@ public class Program {
 				System.out.print("Department ID: ");
 				int departmentId = sc.nextInt();
 
-				Seller seller = new Seller(name, email, birthDate, baseSalary, departmentId);
+				Employee employee = new Employee(name, email, birthDate, baseSalary, departmentId);
 
-				rs = seller.inputSeller();
-				
-				System.out.println();
-				while (rs.next()) {
-					int id = rs.getInt(1);
-					System.out.println(seller.getName() + " Successfully added, your ID is " + id);
-				}
+				rs = employee.addEmployee();
+
+				employee.printAddEmployee(rs);
 				
 				}
 
@@ -77,8 +85,6 @@ public class Program {
 				}
 			}
 
-		} catch (SQLException e) {
-			e.printStackTrace();
 		} finally {
 			DB.closeConnection();
 		}
