@@ -45,18 +45,18 @@ public class Department {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
+		} 
 
 		return rs;
 	}
 
 	public void printAddDepartment(ResultSet rs) {
 		try {
-		while (rs.next()) {
-			int id;
-			id = rs.getInt(1);
-			System.out.println("Department " + name + " are successfully added, your ID is " + id);
-		}
+			while (rs.next()) {
+				int id;
+				id = rs.getInt(1);
+				System.out.println("Department " + name + " are successfully added, your ID is " + id);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -78,11 +78,13 @@ public class Department {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			DB.closeConnection();
 		}
 		return counter;
 
 	}
+
+	
+
+	
 
 }
