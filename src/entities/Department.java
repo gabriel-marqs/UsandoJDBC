@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
 
 import db.DB;
 
@@ -28,11 +29,13 @@ public class Department {
 		this.name = name;
 	}
 
-	public ResultSet addDepartment() {
+	public ResultSet addDepartment(Scanner sc) {
 		Connection conn = null;
 		PreparedStatement st = null;
 		ResultSet rs = null;
-
+		
+		collectDepartmentData(sc);
+		
 		try {
 			conn = DB.getConnection();
 			st = conn.prepareStatement("INSERT INTO department" + "(Name) " + "VALUES " + "(?)",
@@ -42,10 +45,16 @@ public class Department {
 
 			st.executeUpdate();
 			rs = st.getGeneratedKeys();
+			
+			printAddDepartment(rs);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} 
+		} finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+			DB.closeConnection();
+		}
 
 		return rs;
 	}
@@ -79,12 +88,16 @@ public class Department {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
 		return counter;
 
 	}
-
 	
+	public void collectDepartmentData(Scanner sc) {
+		System.out.print("Department name: ");
+		sc.nextLine();
+		name = sc.nextLine();
+	}
 
-	
 
 }

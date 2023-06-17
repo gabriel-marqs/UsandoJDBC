@@ -21,7 +21,10 @@ public class Employee {
 	private String birthDate;
 	private Double baseSalary;
 	private Integer departmentId;
-
+	
+	public Employee() {
+		
+	}
 
 	public Employee(String name, String email, String birthDate, Double baseSalary, Integer departmentId) {
 		this.name = name;
@@ -71,12 +74,12 @@ public class Employee {
 		this.departmentId = departmentId;
 	}
 
-	public ResultSet addEmployee() {
-		Scanner sc = new Scanner(System.in);
+	public void addEmployee(Scanner sc) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Connection conn = null;
 		PreparedStatement st = null;
 		ResultSet rs = null;
+		
 		try {
 
 			conn = DB.getConnection();
@@ -91,7 +94,7 @@ public class Employee {
 			try {
 			st.executeUpdate();
 			} catch (SQLIntegrityConstraintViolationException e) {
-				invalidDepartment();
+				invalidDepartment(sc);
 			}
 			rs = st.getGeneratedKeys();
 
@@ -100,12 +103,8 @@ public class Employee {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
-			invalidDate();
+			invalidDate(sc);
 		} 
-		finally {
-			sc.close();
-		}
-		return rs;
 		
 	}
 
@@ -122,7 +121,7 @@ public class Employee {
 
 	}
 
-	public void checkDepartment() {
+	public void checkDepartment(Scanner sc) {
 		List<Integer> list = new ArrayList<>();
 		Connection conn = null;
 		Statement st = null;
@@ -136,7 +135,7 @@ public class Employee {
 			}
 
 			if (!list.contains(departmentId)) {
-				invalidDepartment();
+				invalidDepartment(sc);
 			}
 
 		} catch (SQLException e) {
@@ -144,8 +143,7 @@ public class Employee {
 		}
 	}
 
-	public void invalidDepartment() {
-		Scanner sc = new Scanner(System.in);
+	public void invalidDepartment(Scanner sc) {
 		Connection conn = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -162,19 +160,30 @@ public class Employee {
 			System.out.print("Department ID: ");
 			departmentId = sc.nextInt();
 			System.out.println();
-			addEmployee();
+			addEmployee(sc);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		sc.close();
 	}
 	
-	public void invalidDate() {
-		Scanner sc = new Scanner(System.in);
+	public void invalidDate(Scanner sc) {
 		System.out.print("Invalid date format. Birthday (dd/MM/yyyy): ");
 		birthDate = sc.next();
-		addEmployee();
-		sc.close();
-	} 
+		addEmployee(sc);
+	}
+	
+	public void collectEmployeeData(Scanner sc) {
+		System.out.print("Name: ");
+		sc.nextLine();
+		name = sc.nextLine();
+		System.out.print("E-mail: ");
+		email = sc.next();
+		System.out.print("Birthday (dd/MM/yyy): ");
+		birthDate = sc.next();
+		System.out.print("Base Salary: ");
+		baseSalary = sc.nextDouble();
+		System.out.print("Department ID: ");
+		departmentId = sc.nextInt();
+	}
 
 }

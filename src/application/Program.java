@@ -23,65 +23,36 @@ public class Program {
 		try {
 
 			conn = DB.getConnection();
-
-			System.out.print("Do you want add a new Employee or Department? (E/D): ");
-			char option = sc.next().toLowerCase().charAt(0);
-
-			while (option != 'd' && option != 'e') {
-				System.out.println("Wrong option. Try again: ");
-				System.out.print("Press D to input a new Department, or E to input a new Employee: ");
-				option = sc.next().toLowerCase().charAt(0);
-
-			}
+			char option = checkOption(sc);
+			Department department = new Department();			
+			
 			if (option == 'd') {
 				System.out.print("How many departments do you wanna add? ");
 				int count = sc.nextInt();
-				
 
 				for (int i = 0; i < count; i++) {
-					System.out.println();
 					if (count > 1) {
-					System.out.println(i + 1 + "º Department:");
+						System.out.println(i + 1 + "º Department:");
 					}
-					System.out.print("Department name: ");
-					sc.nextLine();
-					String name = sc.nextLine();
-
-					Department department = new Department(name);
-					rs = department.addDepartment();
-					department.printAddDepartment(rs);
-
+					
+					department.addDepartment(sc);
 				}
 			} else if (option == 'e') {
 
-				Department department = new Department();
-				int departmentCounter = department.departmentCounter();
-
-				if (departmentCounter > 0) {
+				if (department.departmentCounter() > 0) {
 
 					System.out.print("How many employees do you wanna add? ");
 					int count = sc.nextInt();
 
 					for (int i = 0; i < count; i++) {
-						System.out.println();
 						if (count > 1) {
-						System.out.println(i + 1 + "º Employee:");
+							System.out.println(i + 1 + "º Employee:");
 						}
-						System.out.print("Name: ");
-						sc.nextLine();
-						String name = sc.nextLine();
-						System.out.print("E-mail: ");
-						String email = sc.next();
-						System.out.print("Birthday (dd/MM/yyy): ");
-						String birthDate = sc.next();
-						System.out.print("Base Salary: ");
-						double baseSalary = sc.nextDouble();
-						System.out.print("Department ID: ");
-						int departmentId = sc.nextInt();
 
-						Employee employee = new Employee(name, email, birthDate, baseSalary, departmentId);
-						employee.addEmployee();
-
+						Employee employee = new Employee();
+						employee.collectEmployeeData(sc);
+						employee.addEmployee(sc);
+						
 					}
 				} else {
 					System.out.println("You need at least one department to input a employee.");
@@ -96,6 +67,18 @@ public class Program {
 
 		sc.close();
 
+	}
+	
+	static char checkOption(Scanner sc) {
+		System.out.print("Do you want add a new Employee or Department? (E/D): ");
+		char option = sc.next().toLowerCase().charAt(0);
+		while (option != 'd' && option != 'e') {
+			System.out.println("Wrong option. Try again. ");
+			System.out.print("Press D to add a new Department, or E to add a new Employee: ");
+			option = sc.next().toLowerCase().charAt(0);		
+		}
+		return option;
+		
 	}
 
 }
