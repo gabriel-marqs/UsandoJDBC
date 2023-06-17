@@ -72,6 +72,7 @@ public class Employee {
 	}
 
 	public ResultSet addEmployee() {
+		Scanner sc = new Scanner(System.in);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Connection conn = null;
 		PreparedStatement st = null;
@@ -95,14 +96,17 @@ public class Employee {
 			rs = st.getGeneratedKeys();
 
 			printAddEmployee(rs);
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
-			e.printStackTrace();
+			invalidDate();
 		} 
-
+		finally {
+			sc.close();
+		}
 		return rs;
+		
 	}
 
 	public void printAddEmployee(ResultSet rs) {
@@ -164,5 +168,13 @@ public class Employee {
 		}
 		sc.close();
 	}
+	
+	public void invalidDate() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Invalid date format. Birthday (dd/MM/yyyy): ");
+		birthDate = sc.next();
+		addEmployee();
+		sc.close();
+	} 
 
 }
