@@ -94,7 +94,6 @@ public class Employee {
 			}
 			rs = st.getGeneratedKeys();
 
-			checkDepartment();
 			printAddEmployee(rs);
 
 		} catch (SQLException e) {
