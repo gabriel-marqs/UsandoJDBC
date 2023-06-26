@@ -33,22 +33,34 @@ public class Department {
 		Connection conn = null;
 		PreparedStatement st = null;
 		ResultSet rs = null;
-		
-		collectDepartmentData(sc);
+
+		System.out.print("How many departments do you wanna add? ");
+		int count = sc.nextInt();
+		sc.nextLine();
 		
 		try {
 			conn = DB.getConnection();
-			st = conn.prepareStatement("INSERT INTO department" + "(Name) " + "VALUES " + "(?)",
-					Statement.RETURN_GENERATED_KEYS);
+			for (int i = 0; i < count; i++) {
+				if (count > 1) {
+					System.out.println(i + 1 + "º Department:");
+				}
 
-			st.setString(1, name);
+				collectDepartmentData(sc);
 
-			st.executeUpdate();
-			rs = st.getGeneratedKeys();
-			
-			printAddDepartment(rs);
+				st = conn.prepareStatement("INSERT INTO department" + "(Name) " + "VALUES " + "(?)",
+						Statement.RETURN_GENERATED_KEYS);
 
-		} catch (SQLException e) {
+				st.setString(1, name);
+
+				st.executeUpdate();
+				rs = st.getGeneratedKeys();
+
+				printAddDepartment(rs);
+
+			}
+		}
+
+		catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			DB.closeStatement(st);
@@ -88,16 +100,32 @@ public class Department {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return counter;
 
 	}
-	
+
 	public void collectDepartmentData(Scanner sc) {
+		
 		System.out.print("Department name: ");
-		sc.nextLine();
 		name = sc.nextLine();
 	}
 
+	public char departmentOptions(Scanner sc) {
+		System.out.println("1. list");
+		System.out.println("2. add");
+		System.out.println("3. remove");
+		char option = sc.next().charAt(0);
+
+		while (option != '1' && option != '2' && option != '3') {
+			System.out.println("Wrong option. Try Again.");
+			System.out.println("1. list");
+			System.out.println("2. add");
+			System.out.println("3. remove");
+			option = sc.next().charAt(0);
+		}
+
+		return option;
+	}
 
 }

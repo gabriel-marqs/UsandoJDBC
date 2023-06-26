@@ -76,13 +76,15 @@ public class Employee {
 
 	public void addEmployee(Scanner sc) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
 		Connection conn = null;
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		
 		try {
+			
+			DB.getConnection();
 
-			conn = DB.getConnection();
 			st = conn.prepareStatement("INSERT INTO employee" + "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
 					+ "VALUES " + "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 

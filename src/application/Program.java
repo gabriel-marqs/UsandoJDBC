@@ -23,21 +23,14 @@ public class Program {
 		try {
 
 			conn = DB.getConnection();
-			char option = checkOption(sc);
-			Department department = new Department();			
-			
-			if (option == 'd') {
-				System.out.print("How many departments do you wanna add? ");
-				int count = sc.nextInt();
+			char option = selectSection(sc);
+			Department department = new Department();
 
-				for (int i = 0; i < count; i++) {
-					if (count > 1) {
-						System.out.println(i + 1 + "º Department:");
-					}
-					
-					department.addDepartment(sc);
-				}
-			} else if (option == 'e') {
+			if (option == '1') {
+
+				department.addDepartment(sc);
+
+			} else if (option == '2') {
 
 				if (department.departmentCounter() > 0) {
 
@@ -52,7 +45,7 @@ public class Program {
 						Employee employee = new Employee();
 						employee.collectEmployeeData(sc);
 						employee.addEmployee(sc);
-						
+
 					}
 				} else {
 					System.out.println("You need at least one department to input a employee.");
@@ -68,17 +61,21 @@ public class Program {
 		sc.close();
 
 	}
-	
-	static char checkOption(Scanner sc) {
-		System.out.print("Do you want add a new Employee or Department? (E/D): ");
+
+	static char selectSection(Scanner sc) {
+		System.out.println("Choose a option:");
+		System.out.println("1. Department");
+		System.out.println("2. Employee");
 		char option = sc.next().toLowerCase().charAt(0);
-		while (option != 'd' && option != 'e') {
+		while (option != '1' && option != '2') {
 			System.out.println("Wrong option. Try again. ");
-			System.out.print("Press D to add a new Department, or E to add a new Employee: ");
-			option = sc.next().toLowerCase().charAt(0);		
+			System.out.println("1. Department");
+			System.out.println("2. Employee");
+			option = sc.next().toLowerCase().charAt(0);
 		}
+		System.out.println();
 		return option;
-		
+
 	}
 
 }
