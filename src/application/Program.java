@@ -23,33 +23,17 @@ public class Program {
 		try {
 
 			conn = DB.getConnection();
-			char option = selectSection(sc);
-			Department department = new Department();
+			int option = selectSection(sc);
 
-			if (option == '1') {
+			if (option == 1) {
 
-				department.addDepartment(sc);
+				Department department = new Department();
+				department.departmentOptions(sc);
+				
+			} else if (option == 2) {
 
-			} else if (option == '2') {
-
-				if (department.departmentCounter() > 0) {
-
-					System.out.print("How many employees do you wanna add? ");
-					int count = sc.nextInt();
-
-					for (int i = 0; i < count; i++) {
-						if (count > 1) {
-							System.out.println(i + 1 + "º Employee:");
-						}
-
-						Employee employee = new Employee();
-						employee.collectEmployeeData(sc);
-						employee.addEmployee(sc);
-
-					}
-				} else {
-					System.out.println("You need at least one department to input a employee.");
-				}
+				Employee employee = new Employee();
+				employee.employeeOptions(sc);
 			}
 
 		} finally {
@@ -62,16 +46,16 @@ public class Program {
 
 	}
 
-	static char selectSection(Scanner sc) {
+	static int selectSection(Scanner sc) {
 		System.out.println("Choose a option:");
 		System.out.println("1. Department");
 		System.out.println("2. Employee");
-		char option = sc.next().toLowerCase().charAt(0);
-		while (option != '1' && option != '2') {
+		int option = sc.nextInt();
+		while (option != 1 && option != 2) {
 			System.out.println("Wrong option. Try again. ");
 			System.out.println("1. Department");
 			System.out.println("2. Employee");
-			option = sc.next().toLowerCase().charAt(0);
+			option = sc.nextInt();
 		}
 		System.out.println();
 		return option;

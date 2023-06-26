@@ -37,7 +37,7 @@ public class Department {
 		System.out.print("How many departments do you wanna add? ");
 		int count = sc.nextInt();
 		sc.nextLine();
-		
+
 		try {
 			conn = DB.getConnection();
 			for (int i = 0; i < count; i++) {
@@ -106,26 +106,42 @@ public class Department {
 	}
 
 	public void collectDepartmentData(Scanner sc) {
-		
+
 		System.out.print("Department name: ");
 		name = sc.nextLine();
 	}
 
-	public char departmentOptions(Scanner sc) {
+	public void departmentOptions(Scanner sc) {
 		System.out.println("1. list");
 		System.out.println("2. add");
 		System.out.println("3. remove");
-		char option = sc.next().charAt(0);
+		int option = sc.nextInt();
 
-		while (option != '1' && option != '2' && option != '3') {
+		while (option > 3) {
 			System.out.println("Wrong option. Try Again.");
 			System.out.println("1. list");
 			System.out.println("2. add");
 			System.out.println("3. remove");
-			option = sc.next().charAt(0);
+			option = sc.nextInt();
+		}
+		
+		executeOptions(option, sc);
+		
+	}
+	
+	public void executeOptions(int option, Scanner sc) {
+		if (option == 1) {
+			System.out.println("In progress...");
 		}
 
-		return option;
+		else if (option == 2) {
+			addDepartment(sc);
+		}
+
+		else {
+			System.out.println("In progress...");
+		}
+		
 	}
 
 }

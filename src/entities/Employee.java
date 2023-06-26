@@ -8,6 +8,9 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -21,9 +24,9 @@ public class Employee {
 	private String birthDate;
 	private Double baseSalary;
 	private Integer departmentId;
-	
+
 	public Employee() {
-		
+
 	}
 
 	public Employee(String name, String email, String birthDate, Double baseSalary, Integer departmentId) {
@@ -75,39 +78,56 @@ public class Employee {
 	}
 
 	public void addEmployee(Scanner sc) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
-		Connection conn = null;
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		
-		try {
-			
-			DB.getConnection();
 
-			st = conn.prepareStatement("INSERT INTO employee" + "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
-					+ "VALUES " + "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+		Department department = new Department();
 
-			st.setString(1, name);
-			st.setString(2, email);
-			st.setDate(3, new java.sql.Date(sdf.parse(birthDate).getTime()));
-			st.setDouble(4, baseSalary);
-			st.setInt(5, departmentId);
+		if (department.departmentCounter() > 0) {
+
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+			Connection conn = null;
+			PreparedStatement st = null;
+			ResultSet rs = null;
+
+			System.out.print("How many employees do you wanna add? ");
+			int count = sc.nextInt();
+
 			try {
-			st.executeUpdate();
-			} catch (SQLIntegrityConstraintViolationException e) {
-				invalidDepartment(sc);
-			}
-			rs = st.getGeneratedKeys();
+				conn = DB.getConnection();
+				for (int i = 0; i < count; i++) {
+					if (count > 1) {
+						System.out.println(i + 1 + "º Employee:");
+					}
 
-			printAddEmployee(rs);
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			invalidDate(sc);
-		} 
-		
+					collectEmployeeData(sc);
+
+					st = conn.prepareStatement("INSERT INTO employee"
+							+ "(Name, Email, BirthDate, BaseSalary, DepartmentId) " + "VALUES " + "(?, ?, ?, ?, ?)",
+							Statement.RETURN_GENERATED_KEYS);
+
+					st.setString(1, name);
+					st.setString(2, email);
+					st.setDate(3, new java.sql.Date(sdf.parse(birthDate).getTime()));
+					st.setDouble(4, baseSalary);
+					st.setInt(5, departmentId);
+					try {
+						st.executeUpdate();
+					} catch (SQLIntegrityConstraintViolationException e) {
+						invalidDepartment(sc);
+					}
+					rs = st.getGeneratedKeys();
+
+					printAddEmployee(rs);
+
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				invalidDate(sc);
+			}
+		} else {
+			System.out.println("You need at least one department to input a employee.");
+		}
 	}
 
 	public void printAddEmployee(ResultSet rs) {
@@ -123,7 +143,7 @@ public class Employee {
 
 	}
 
-	public void checkDepartment(Scanner sc) {
+	public boolean checkDepartment(Scanner sc) {
 		List<Integer> list = new ArrayList<>();
 		Connection conn = null;
 		Statement st = null;
@@ -137,12 +157,14 @@ public class Employee {
 			}
 
 			if (!list.contains(departmentId)) {
-				invalidDepartment(sc);
+				return false;
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return true;
 	}
 
 	public void invalidDepartment(Scanner sc) {
@@ -162,30 +184,87 @@ public class Employee {
 			System.out.print("Department ID: ");
 			departmentId = sc.nextInt();
 			System.out.println();
-			addEmployee(sc);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void invalidDate(Scanner sc) {
 		System.out.print("Invalid date format. Birthday (dd/MM/yyyy): ");
 		birthDate = sc.next();
 		addEmployee(sc);
 	}
-	
+
 	public void collectEmployeeData(Scanner sc) {
-		System.out.print("Name: ");
 		sc.nextLine();
+		System.out.print("Name: ");
 		name = sc.nextLine();
 		System.out.print("E-mail: ");
 		email = sc.next();
 		System.out.print("Birthday (dd/MM/yyy): ");
-		birthDate = sc.next();
+		String dateStr = sc.next();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		try {
+			LocalDate date = LocalDate.parse(dateStr, formatter);
+			LocalDate currentDate = LocalDate.now();
+			
+			LocalDate minValidDate = currentDate.minusYears(14);
+			LocalDate maxValidDate = LocalDate.of(1920, 1, 1);
+			
+			while (date.isAfter(minValidDate) || date.isBefore(maxValidDate)) {
+				System.out.println("Invalid birth date. Please enter a date between "
+						+ formatter.format(maxValidDate) + " and "
+						+ formatter.format(minValidDate));
+				collectEmployeeData(sc);
+				return;				
+			}
+			
+			birthDate = formatter.format(date);
+
+		} catch (DateTimeParseException e) {
+			invalidDate(sc);
+		}
 		System.out.print("Base Salary: ");
 		baseSalary = sc.nextDouble();
 		System.out.print("Department ID: ");
 		departmentId = sc.nextInt();
+		while (checkDepartment(sc) == false) {
+			invalidDepartment(sc);
+		}
+	}
+
+	public void employeeOptions(Scanner sc) {
+		System.out.println("1. list");
+		System.out.println("2. add");
+		System.out.println("3. remove");
+		int option = sc.nextInt();
+
+		while (option > 3) {
+			System.out.println("Wrong option. Try Again.");
+			System.out.println("1. list");
+			System.out.println("2. add");
+			System.out.println("3. remove");
+			option = sc.nextInt();
+		}
+
+		executeOptions(option, sc);
+
+	}
+
+	public void executeOptions(int option, Scanner sc) {
+		if (option == 1) {
+			System.out.println("In progress...");
+		}
+
+		else if (option == 2) {
+			addEmployee(sc);
+		}
+
+		else {
+			System.out.println("In progress...");
+		}
+
 	}
 
 }
