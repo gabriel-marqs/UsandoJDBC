@@ -83,6 +83,34 @@ public class Department {
 		}
 	}
 
+	public void updateDepartment(Scanner sc) {
+		System.out.print("Informe o ID do Departamento que deseja atualizar: ");
+		int option = sc.nextInt();
+		System.out.print("Informe o nome atualizado: ");
+		sc.nextLine();
+		String newName = sc.nextLine();
+		
+		Connection conn = null;
+		PreparedStatement st = null;
+		
+		try {
+			conn = DB.getConnection();
+			
+			st = conn.prepareStatement(
+					"UPDATE department "
+					+ "SET Name = ? "
+					+ "WHERE "
+					+ "(DepartmentId = ?)");
+			
+			st.setString(1, newName);
+			st.setInt(2, option);
+			st.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public Integer departmentCounter() {
 		Connection conn = null;
 		Statement st = null;
@@ -115,13 +143,15 @@ public class Department {
 		System.out.println("1. list");
 		System.out.println("2. add");
 		System.out.println("3. remove");
+		System.out.println("4. update");
 		int option = sc.nextInt();
 
-		while (option > 3) {
+		while (option > 4) {
 			System.out.println("Wrong option. Try Again.");
 			System.out.println("1. list");
 			System.out.println("2. add");
 			System.out.println("3. remove");
+			System.out.println("4. update");
 			option = sc.nextInt();
 		}
 		
@@ -136,6 +166,10 @@ public class Department {
 
 		else if (option == 2) {
 			addDepartment(sc);
+		}
+		
+		else if (option == 3) {
+			System.out.println("In progress...");
 		}
 
 		else {
