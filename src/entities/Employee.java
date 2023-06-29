@@ -208,18 +208,17 @@ public class Employee {
 		try {
 			LocalDate date = LocalDate.parse(dateStr, formatter);
 			LocalDate currentDate = LocalDate.now();
-			
+
 			LocalDate minValidDate = currentDate.minusYears(14);
 			LocalDate maxValidDate = LocalDate.of(1920, 1, 1);
-			
+
 			while (date.isAfter(minValidDate) || date.isBefore(maxValidDate)) {
-				System.out.println("Invalid birth date. Please enter a date between "
-						+ formatter.format(maxValidDate) + " and "
-						+ formatter.format(minValidDate));
+				System.out.println("Invalid birth date. Please enter a date between " + formatter.format(maxValidDate)
+						+ " and " + formatter.format(minValidDate));
 				collectEmployeeData(sc);
-				return;				
+				return;
 			}
-			
+
 			birthDate = formatter.format(date);
 
 		} catch (DateTimeParseException e) {
@@ -238,13 +237,15 @@ public class Employee {
 		System.out.println("1. list");
 		System.out.println("2. add");
 		System.out.println("3. remove");
+		System.out.println("4. update");
 		int option = sc.nextInt();
 
-		while (option > 3) {
+		while (option > 4) {
 			System.out.println("Wrong option. Try Again.");
 			System.out.println("1. list");
 			System.out.println("2. add");
 			System.out.println("3. remove");
+			System.out.println("4. update");
 			option = sc.nextInt();
 		}
 
@@ -262,7 +263,100 @@ public class Employee {
 		}
 
 		else {
-			System.out.println("In progress...");
+			updateEmployee(sc);
+		}
+
+	}
+
+	public void updateEmployee(Scanner sc) {
+		System.out.print("Employee ID: ");
+		int empId = sc.nextInt();
+
+		System.out.println("What do you wanna change?");
+		System.out.println("1. Name");
+		System.out.println("2. E-mail");
+		System.out.println("3. Birth Date");
+		System.out.println("4. Base Salary");
+		System.out.println("5. Department");
+		System.out.print("Option: ");
+		int option = sc.nextInt();
+
+		while (option > 5) {
+			System.out.println("Wrong option. Try Again.");
+			System.out.println("1. Name");
+			System.out.println("2. E-mail");
+			System.out.println("3. Birth Date");
+			System.out.println("4. Base Salary");
+			System.out.println("5. Department");
+			option = sc.nextInt();
+			
+		}
+		
+		String optionName = "";
+		if (option == 1) {
+			optionName = "Name";
+		} 
+		else if (option == 2) {
+			optionName = "Email";
+		}
+		else if (option == 3) {
+			optionName = "BirthDate";
+		}
+		else if (option == 4) {
+			optionName = "BaseSalary";
+		}
+		else if (option == 5) {
+			optionName = "DepartmentId";
+		}
+
+		Connection conn = null;
+		PreparedStatement st = null;
+
+		try {
+			conn = DB.getConnection();
+
+			st = conn.prepareStatement("UPDATE employee " + "SET " + optionName + " = ? " + "WHERE " + "Id = ?");
+
+			st.setInt(2, empId);
+
+			if (option == 1) {
+
+				System.out.print("New name: ");
+				sc.nextLine();
+				st.setString(1, sc.nextLine());
+			}
+			if (option == 2) {
+
+				System.out.print("New e-mail: ");
+				sc.nextLine();
+				st.setString(1, sc.nextLine());
+			}
+			
+			if (option == 3) {
+
+				System.out.print("New Birth Date (dd/MM/yyyy): ");
+				sc.nextLine();
+				st.setString(1, sc.nextLine());
+			}
+			
+			if (option == 4) {
+
+				System.out.print("New base salary: ");
+				sc.nextLine();
+				st.setDouble(1, sc.nextDouble());
+			}
+			
+			else if (option == 5){
+
+				System.out.print("New ID Department: ");
+				sc.nextLine();
+				st.setInt(1, sc.nextInt());
+			}
+			
+			st.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 
 	}

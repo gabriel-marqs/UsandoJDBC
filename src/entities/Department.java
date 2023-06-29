@@ -100,7 +100,7 @@ public class Department {
 					"UPDATE department "
 					+ "SET Name = ? "
 					+ "WHERE "
-					+ "(DepartmentId = ?)");
+					+ "(Id = ?)");
 			
 			st.setString(1, newName);
 			st.setInt(2, option);
@@ -173,7 +173,7 @@ public class Department {
 		}
 
 		else {
-			System.out.println("In progress...");
+			updateDepartment(sc);
 		}
 		
 	}
